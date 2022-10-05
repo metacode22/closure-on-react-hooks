@@ -1,17 +1,79 @@
+/* eslint-disable */
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+const { useState, useEffect, render } = (function makeMyHooks() {
+	const hooks = [];
+	let index = 0;
+
+	const useState = (initValue) => {
+		const state = hooks[index] || initValue;
+		hooks[index] = state;
+		const currentIndex = index;
+		const setState = (value) => {
+			hooks[currentIndex] = value;
+			render();
+		};
+		index++;
+
+		return [state, setState];
+	};
+
+	const useEffect = (callback, deps) => {
+		const oldDeps = hooks[index];
+		let hasChanged = true;
+		if (oldDeps) {
+			hasChanged = deps.some((dep, idx) => !Object.is(dep, oldDeps[idx]));
+		}
+		if (hasChanged) callback();
+		hooks[index] = deps;
+		index++;
+	};
+
+	const render = () => {
+		index = 0;
+		root.render(<App />);
+	};
+
+	return { useState, useEffect, render };
+})();
+
+function App() {
+	const [count, setCount] = useState(0);
+	const [text, setText] = useState('');
+
+	const handleInput = (event) => {
+		event.preventDefault();
+		setText(event.target.value);
+	};
+
+	useEffect(() => {
+		console.log('useEffect!');
+	}, [count]);
+
+	return (
+		<div>
+			<h1> Jungle Frontend Study</h1>
+			<div>
+				<h3>State 1. count</h3>
+				<p>Count: {count}</p>
+				<button onClick={() => setCount(count + 1)}>Increase</button>
+			</div>
+      <br />
+			<br />
+			<hr />
+			<br />
+      <br />
+			<div>
+				<h3>State 2. text</h3>
+				<input onChange={handleInput}></input>
+				<div>{text}</div>
+			</div>
+		</div>
+	);
+}
+
+render();
