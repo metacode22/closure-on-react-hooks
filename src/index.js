@@ -56,11 +56,11 @@ function App() {
 
 	return (
 		<div>
-			<h1> Jungle Frontend Study</h1>
+			<h1>Closure on React Hooks</h1>
 			<div>
 				<h3>State 1. count</h3>
 				<p>Count: {count}</p>
-				<button onClick={() => setCount(count + 1)}>Increase</button>
+				<button onClick={() => setCount(count + 1)}>Increase Count</button>
 			</div>
       <br />
 			<br />
